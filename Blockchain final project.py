@@ -65,3 +65,28 @@ ID_HASH_PAGE_TEMPLATE = """
 </body>
 </html>
 """
+
+# Utility function to calculate the SHA-256 hash of a block
+def calculate_hash(index, previous_hash, data):
+    # Concatenate the index, previous hash, and data into a single string
+    value = f"{index}{previous_hash}{data}".encode()
+    # Return the SHA-256 hash of the concatenated string
+    return hashlib.sha256(value).hexdigest()
+
+# Utility function to create a new block in the supply chain
+def create_block(item, quantity):
+    # Determine the index of the new block
+    index = len(supply_chain)
+    # Get the hash of the previous block, or use a default value if it's the first block
+    previous_hash = supply_chain[-1]['hash'] if supply_chain else '0' * 64
+    # Create the data dictionary for the new block
+    data = {'item': item, 'quantity': quantity}
+    # Calculate the hash for the new block
+    hash_value = calculate_hash(index, previous_hash, data)
+    # Return the new block as a dictionary
+    return {
+        'index': index,
+        'previous_hash': previous_hash,
+        'data': data,
+        'hash': hash_value
+    }
