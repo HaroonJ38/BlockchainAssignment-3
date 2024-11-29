@@ -90,3 +90,32 @@ def create_block(item, quantity):
         'data': data,
         'hash': hash_value
     }
+
+# Route for the main page
+@app.route('/')
+def index():
+    # Render the main page template with the current supply chain data
+    return render_template_string(MAIN_PAGE_TEMPLATE, supply_chain=supply_chain)
+
+# Route to add a new item to the supply chain
+@app.route('/add', methods=['POST'])
+def add_item():
+    # Get the item name and quantity from the form data
+    item = request.form.get('item')
+    quantity = int(request.form.get('quantity'))
+    # Create a new block with the provided item and quantity
+    block = create_block(item, quantity)
+    # Append the new block to the supply chain
+    supply_chain.append(block)
+    # Return a JSON response indicating success and include the new block's data
+    return jsonify({'message': 'Item added to the supply chain', 'block': block})
+
+# Route to display the IDs and hashes of all blocks
+@app.route('/ids-and-hashes')
+def ids_and_hashes():
+    # Render the IDs and Hashes page template with the current supply chain data
+    return render_template_string(ID_HASH_PAGE_TEMPLATE, supply_chain=supply_chain)
+
+# Run the Flask application
+if __name__ == '__main__':
+    app.run(debug=True)
